@@ -42,13 +42,13 @@ class Application(Frame):
     
         ua = UserAgent() # From here we generate a random user agent
         #otas = ['https://www.expedia.co.in','https://in.hotels.com','https://www.goibibo.com/hotels/']
-        otas = ['https://www.goibibo.com/hotels/']
+        otas = ['https://in.hotels.com']
         '''
         Gives a range of dates
         '''
         dateRange = []
         def daterange(date1, date2):
-            for n in range(int ((date2 - date1).days)+1):
+            for n in range(int ((date2 - date1).days)+2):
                 yield date1 + timedelta(n)
         
         startDate = date(int(startDate[2]), int(startDate[1]), int(startDate[0]))
@@ -86,8 +86,8 @@ class Application(Frame):
         Crawling through the wepages in otas
         '''
         df = []
-        for oneDate in dateRange:
-            inputs = [searchKey, oneDate, '01/05/2020']
+        for index, oneDate in enumerate(dateRange[:-1]):
+            inputs = [searchKey, oneDate, dateRange[index+1]]
             for url in otas:
                 proxy_index = random_proxy()
                 proxy = proxies[proxy_index]
@@ -103,19 +103,19 @@ class Application(Frame):
                         if temp == 1:
                             df = expedia.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
-                                df.to_csv('datasetHotelNames/expedia'+oneDate+'.csv')
-                                df = []
-                                break
-                        if temp == 2:
-                            df = Hotelsdotcom.parse(url, proxy, driver, inputs)
-                            if len(df) > 1:
-                                df.to_csv('datasetHotelNames/Hotelsdotcom'+oneDate+'.csv')
+                                df.to_csv('expedia'+oneDate+'.csv')
                                 df = []
                                 break
                         if temp == 0:
+                            df = Hotelsdotcom.parse(url, proxy, driver, inputs)
+                            if len(df) > 1:
+                                df.to_csv('Hotelsdotcom'+oneDate+'.csv')
+                                df = []
+                                break
+                        if temp == 2:
                             df = Goibibo.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
-                                df.to_csv('datasetHotelNames/goibibo'+oneDate+'.csv')
+                                df.to_csv('goibibo'+oneDate+'.csv')
                                 df = []
                                 break
                     except: # If error, delete this proxy and find another one
