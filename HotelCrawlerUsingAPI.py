@@ -85,12 +85,16 @@ class Application(Frame):
         '''
         Crawling through the wepages in otas
         '''
-        df = []
+        df = pd.DataFrame
+        expediaDF = pd.DataFrame
+        HotelsdotcomDF = pd.DataFrame
+        GoibiboDF = pd.DataFrame
         for index, oneDate in enumerate(dateRange[:-1]):
             inputs = [searchKey, oneDate, dateRange[index+1]]
             for url in otas:
                 proxy_index = random_proxy()
                 proxy = proxies[proxy_index]
+                oneDate = oneDate.replace("/","")
                 while True: 
                     #driver = random.choice([1, 2])
                     driver = 1
@@ -100,34 +104,45 @@ class Application(Frame):
                         my_ip = urlopen(req).read().decode('utf8')
                         print('#' + str(1) + ': ' + my_ip)
                         temp = otas.index(url)
-                        if temp == 1:
+                        if temp == 2:
                             df = expedia.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
-                                df.to_csv('expedia'+oneDate+'.csv')
-                                df = []
+                                if index == 0:
+                                    expediaDF = df
+                                else:
+                                    expediaDF = pd.merge(expediaDF, df, on='hotelName', how='outer')
+                                df = pd.DataFrame
                                 break
                         if temp == 0:
                             df = Hotelsdotcom.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
-                                df.to_csv('Hotelsdotcom'+oneDate+'.csv')
-                                df = []
+                                if index == 0:
+                                    HotelsdotcomDF = df
+                                else:
+                                    HotelsdotcomDF = pd.merge(HotelsdotcomDF, df, on='hotelName', how='outer')
+                                df = pd.DataFrame
                                 break
-                        if temp == 2:
+                        if temp == 1:
                             df = Goibibo.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
-                                df.to_csv('goibibo'+oneDate+'.csv')
-                                df = []
+                                if index == 0:
+                                    GoibiboDF = df
+                                else:
+                                    GoibiboDF = pd.merge(GoibiboDF, df, on='hotelName', how='outer')
+                                df = pd.DataFrame
                                 break
                     except: # If error, delete this proxy and find another one
                         #del proxies[proxy_index]
                         #print('Proxy ' + proxy['ip'] + ':' + proxy['port'] + ' deleted.')
-                        del proxies[proxy_index]
-                        try:
-                            proxy_index = random_proxy()
-                        except:
-                            proxies = proxyGenerator()
+                        proxies = proxyGenerator()
+                        proxy_index = random_proxy()
+                        
                         proxy = proxies[proxy_index]
                 sleep(random.choice([1,2,3,4]))
+            print(oneDate+' Done')
+        #expediaDF.to_csv('expedia.csv')
+        HotelsdotcomDF.to_csv('Hotelsdotcom.csv')
+        #GoibiboDF.to_csv('Goibibo.csv')
 
     def initUI(self):
 

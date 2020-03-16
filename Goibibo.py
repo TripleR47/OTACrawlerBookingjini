@@ -37,7 +37,7 @@ def parse(url, proxy, driver, inputs):
         checkOutElement = response.find_elements_by_xpath('//*[@id="Home"]/div[3]/div[1]/div/div[1]/div[3]/div/div[1]/div[2]/div/div/input')
         if checkInElement and checkOutElement:
             searchKeyElement[0].send_keys(searchKey)
-            sleep(5)
+            sleep(10)
             searchKeyElement[0].send_keys(Keys.TAB)
             sleep(5)
             checkInElement.click()
@@ -101,7 +101,7 @@ def parse(url, proxy, driver, inputs):
         response.close()
         item = {
                                 "hotelName":hotelNames,
-                                "price":prices
+                                inputs[1]:prices
                     }
         df = pd.DataFrame(item)
         df = pd.DataFrame.drop_duplicates(df)

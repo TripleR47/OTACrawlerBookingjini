@@ -18,14 +18,14 @@ def check_ping(hostname):
     else:
         return False
 '''
-def parse(url, driver, inputs):
+def parse(url, proxy, driver, inputs):
     searchKey = inputs[0] # Change this to your city 
     checkInDate = inputs[1] #Format %d/%m/%Y
     checkOutDate = inputs[2] #Format %d/%m/%Y
     if driver == 1:
-        #PROXY = proxy # IP:PORT 
-        #chrome_options = webdriver.ChromeOptions()
-        #chrome_options.add_argument('--proxy-server=%s' % PROXY)
+        PROXY = proxy # IP:PORT 
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--proxy-server=%s' % PROXY)
         response = webdriver.Chrome(executable_path = r'C:\Users\TripleR\Downloads\chromedriver_win32\chromedriver.exe')
     if driver == 2:
         firefox_capabilities = DesiredCapabilities.FIREFOX
@@ -87,7 +87,7 @@ def parse(url, driver, inputs):
         response.close()
         item = {
                 "hotelName":hotelNames,
-                "price":prices
+                inputs[1]:prices
         }
         df = pd.DataFrame(item)
         df = pd.DataFrame.drop_duplicates(df)
@@ -95,4 +95,3 @@ def parse(url, driver, inputs):
         return df
     except:
         response.close()
-parse('https://in.hotels.com', 1, ['haldia', '12/03/2020', '13/03/2020'])

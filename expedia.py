@@ -24,7 +24,7 @@ def parse(url, proxy, driver, inputs):
     checkInDate = inputs[1] #Format %d/%m/%Y
     checkOutDate = inputs[2] #Format %d/%m/%Y
     if driver == 1:
-        PROXY = proxy['ip'] + ':' + proxy['port'] # IP:PORT 
+        PROXY = proxy # IP:PORT 
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--proxy-server=%s' % PROXY)
         response = webdriver.Chrome(executable_path = r'C:\Users\TripleR\Downloads\chromedriver_win32\chromedriver.exe', chrome_options=chrome_options)
@@ -80,7 +80,7 @@ def parse(url, proxy, driver, inputs):
         
         hotels = parser.xpath('//div[@class="uitk-card-content uitk-grid uitk-cell all-y-padding-three all-x-padding-three listing-content"]')
         for hotel in hotels[:]: #Replace 5 with 1 to just get the cheapest hotel
-            hotelName = hotel.xpath('.//div[1]/div[1]/h3')
+            hotelName = hotel.xpath('.//div[1]/h3')
             hotelName = hotelName[0].text_content() if hotelName else None
             price = hotel.xpath('.//div[2]/div/div[2]/div/div[1]/div[1]/span/span[2]')
             price = price[0].text_content().replace(",","").strip() if price else None
@@ -96,7 +96,7 @@ def parse(url, proxy, driver, inputs):
         response.close()
         item = {
                 "hotelName":hotelNames,
-                "price":prices
+                inputs[1]:prices
         }
         df = pd.DataFrame(item)
         df = pd.DataFrame.drop_duplicates(df)
