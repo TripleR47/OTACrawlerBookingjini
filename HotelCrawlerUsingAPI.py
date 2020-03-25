@@ -42,7 +42,7 @@ class Application(Frame):
     
         ua = UserAgent() # From here we generate a random user agent
         #otas = ['https://www.expedia.co.in','https://in.hotels.com','https://www.goibibo.com/hotels/']
-        otas = ['https://in.hotels.com']
+        otas = ['https://www.goibibo.com/hotels/']
         '''
         Gives a range of dates
         '''
@@ -113,7 +113,7 @@ class Application(Frame):
                                     expediaDF = pd.merge(expediaDF, df, on='hotelName', how='outer')
                                 df = pd.DataFrame
                                 break
-                        if temp == 0:
+                        if temp == 1:
                             df = Hotelsdotcom.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
                                 if index == 0:
@@ -122,7 +122,7 @@ class Application(Frame):
                                     HotelsdotcomDF = pd.merge(HotelsdotcomDF, df, on='hotelName', how='outer')
                                 df = pd.DataFrame
                                 break
-                        if temp == 1:
+                        if temp == 0:
                             df = Goibibo.parse(url, proxy, driver, inputs)
                             if len(df) > 1:
                                 if index == 0:
@@ -141,8 +141,8 @@ class Application(Frame):
                 sleep(random.choice([1,2,3,4]))
             print(oneDate+' Done')
         #expediaDF.to_csv('expedia.csv')
-        HotelsdotcomDF.to_csv('Hotelsdotcom.csv')
-        #GoibiboDF.to_csv('Goibibo.csv')
+        #HotelsdotcomDF.to_csv('Hotelsdotcom.csv')
+        GoibiboDF.to_csv('Goibibo.csv')
 
     def initUI(self):
 
